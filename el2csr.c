@@ -7,12 +7,13 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct bin {
 
   edge_t *es;
   int entries;
-  int maxEnt;
+  //int maxEnt;
 
 } bin_t;
 
@@ -21,26 +22,30 @@ bin_t *bins;
 unsigned long NUM_BINS;
 
 void bin_init(el_t *el){
-  NUM_BINS = el->num_edges/2 + 1; // Can calculate num bins differently
+  double scaling_factor = 1.5; // VALS: 4.0, 2.0, 1.75, 1.5, 1.25, 1.0 
+  NUM_BINS = (unsigned long)ceil((double)(el->num_edges/scaling_factor)); // Also want to test ceil(log10(el->num_edges));
   bins = (bin_t*)malloc(sizeof(bin_t)*(NUM_BINS));
 
   for(int i = 0; i<NUM_BINS; i++){
-    bins[i].es = calloc(64, sizeof(edge_t));
+    bins[i].es = calloc(MAX_VTX, sizeof(edge_t));
     bins[i].entries = 0;
-    bins[i].maxEnt = 64;
+    // bins[i].maxEnt = 64;
   }
 }
 
 void bin_fill(unsigned long edges, edge_t *e){
   int ind = 0;
-  for(unsigned long i = 0; i < MAX_VTX; i+=MAX_VTX/NUM_BINS){
-    if(e->dst <= (i+MAX_VTX/NUM_BINS))
+  double inc = (double)MAX_VTX/(double)NUM_BINS;
+  for(double i = 0; i < MAX_VTX; i+=inc){
+    if(e->dst <= (i+inc))
       break;
     ind++;
   }
+  if(ind>=NUM_BINS) ind = NUM_BINS-1;
   bins[ind].es[bins[ind].entries].src = e->src;
   bins[ind].es[bins[ind].entries].dst = e->dst;
   bins[ind].entries++;
+  /*
   if(bins[ind].entries == bins[ind].maxEnt){
     edge_t *new_es = calloc(bins[ind].maxEnt*2, sizeof(edge_t));
     memcpy(new_es, bins[ind].es, bins[ind].maxEnt*sizeof(edge_t));
@@ -48,6 +53,7 @@ void bin_fill(unsigned long edges, edge_t *e){
     bins[ind].maxEnt = bins[ind].maxEnt*2;
     bins[ind].es = new_es;
   }
+  */
 
 }
 
@@ -128,8 +134,6 @@ void *PB_CSR_neigh_pop(el_t *el, csr_t *csr){
    
 }
 
-
-
 /*Convert an input edge list in the file in argv[1] into a csr in the file in
  * argv[2]*/
 int main(int argc, char *argv[]){
@@ -146,8 +150,8 @@ int main(int argc, char *argv[]){
   /*TODO: insert a call to your implementation of pb_bin_EL(el,...)
           which should populate your bins.
   */
- pb_bin_EL(el);
- bin_print();
+  pb_bin_EL(el);
+  bin_print();
   
   printf("Counting neighbors...");
   /*TODO: replace this call with a call to your PB_CSR_count_neigh(...)*/
@@ -181,5 +185,4 @@ int main(int argc, char *argv[]){
   /*Put the "output" OA into the CSR to use in output*/  
   csr->oa = oa_out;
   CSR_out(argv[2],el->num_edges,csr);
- 
 }

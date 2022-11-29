@@ -54,7 +54,6 @@ void write_rand_el_file(char *f){
 
     edges[i] = (rand() % (MAX_VTX-1)) + 1; 
     edges[i+1] = (rand() % (MAX_VTX-1)) + 1;
-    printf("edge1: %lx, edge2: %lx\n", edges[i], edges[i+1]);
     if(edges[i+1] == edges[i]){ 
       edges[i]++;  /*No self edges in this format*/
     }
