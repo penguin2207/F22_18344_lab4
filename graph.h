@@ -1,6 +1,6 @@
 #ifndef _GRAPH_H_
 #define _GRAPH_H_
-#define MAX_VTX 100
+#define MAX_VTX 500000
 #define V_NAME_LEN 8
 
 typedef unsigned long vertex_t;

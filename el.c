@@ -7,6 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <math.h>
 
 #include "el.h"
 #include "graph.h"
@@ -32,8 +33,7 @@ el_t *init_el_file(char *f){
   fprintf(stderr,"Loading %lu edges\n",num_edges);
 
   el->num_edges = num_edges;
-  el->num_vtx = 0; /*if num_vtx is 0, haven't counted vertices yet*/
-
+  el->num_vtx = 34546; /*if num_vtx is 0, haven't counted vertices yet*/
   char *map_el = 
     mmap(NULL, sz, PROT_READ, MAP_PRIVATE /*| MAP_HUGETLB | MAP_HUGE_1GB*/, fd, 0);
 

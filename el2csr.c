@@ -22,8 +22,9 @@ bin_t *bins;
 unsigned long NUM_BINS;
 
 void bin_init(el_t *el){
-  double scaling_factor = 1.5; // VALS: 4.0, 2.0, 1.75, 1.5, 1.25, 1.0 
-  NUM_BINS = (unsigned long)ceil((double)(el->num_edges/scaling_factor)); // Also want to test ceil(log10(el->num_edges));
+  double scaling_factor = 4.0; // VALS: 4.0, 2.0, 1.75, 1.5, 1.25, 1.0, log(see below)
+  NUM_BINS = (unsigned long)ceil((double)(el->num_vtx/scaling_factor)); // Also want to test ceil(log10(el->num_edges));
+  //NUM_BINS = (unsigned long)ceil((double)log10(el->num_vtx));
   bins = (bin_t*)malloc(sizeof(bin_t)*(NUM_BINS));
 
   for(int i = 0; i<NUM_BINS; i++){
@@ -33,10 +34,10 @@ void bin_init(el_t *el){
   }
 }
 
-void bin_fill(unsigned long edges, edge_t *e){
+void bin_fill(el_t *el, edge_t *e){
   int ind = 0;
-  double inc = (double)MAX_VTX/(double)NUM_BINS;
-  for(double i = 0; i < MAX_VTX; i+=inc){
+  double inc = (double)el->num_vtx/(double)NUM_BINS;
+  for(double i = 0; i < el->num_vtx; i+=inc){
     if(e->dst <= (i+inc))
       break;
     ind++;
@@ -78,21 +79,24 @@ int pb_bin_EL(el_t *el){
   unsigned long edges = el->num_edges;
   unsigned long s_or_d = (unsigned long) 0;
   edge_t *cur_edge = (edge_t *)calloc(1, sizeof(edge_t));
+  vertex_t *cur = (vertex_t *)el->el;
   unsigned long byte_count = 0;
   for(unsigned long i = 0; i<edges; i++){
-    for(unsigned long j = 0; j<8; j++){
-      s_or_d |= ((el->el[byte_count])&0xffUL) << (j*8);
-      byte_count++;
-    }
+    // for(unsigned long j = 0; j<8; j++){
+    //   s_or_d |= ((el->el[byte_count])&0xffUL) << (j*8);
+    //   byte_count++;
+    // }
+    s_or_d = *cur;
+    cur++;
     cur_edge->src = s_or_d;
-    s_or_d = (unsigned long) 0;
-    for(unsigned long j = 0; j<8; j++){
-      s_or_d |= ((el->el[byte_count])&0xffUL) << (j*8);
-      byte_count++;
-    }
+    // for(unsigned long j = 0; j<8; j++){
+    //   s_or_d |= ((el->el[byte_count])&0xffUL) << (j*8);
+    //   byte_count++;
+    // }
+    s_or_d = *cur;
+    cur++;
     cur_edge->dst = s_or_d;
-    bin_fill(el->num_edges, cur_edge);
-    s_or_d = (unsigned long) 0;
+    bin_fill(el, cur_edge);
   }
   return 0;
 
@@ -150,13 +154,13 @@ int main(int argc, char *argv[]){
   /*TODO: insert a call to your implementation of pb_bin_EL(el,...)
           which should populate your bins.
   */
-  pb_bin_EL(el);
-  bin_print();
+  //pb_bin_EL(el);
+  //bin_print();
   
   printf("Counting neighbors...");
   /*TODO: replace this call with a call to your PB_CSR_count_neigh(...)*/
-  PB_CSR_count_neigh(el,g_oa);
-  //CSR_EL_count_neigh(el,g_oa);
+  //PB_CSR_count_neigh(el,g_oa);
+  CSR_EL_count_neigh(el,g_oa);
   printf("Done.\n");
 
   /*g_oa contains offsets counted from edge list*/
@@ -177,8 +181,8 @@ int main(int argc, char *argv[]){
 
   printf("Populating neighbors...");
   /*TODO: replace this call with a call to your PB_CSR_neigh_pop(...)*/
-  PB_CSR_neigh_pop(el,csr);
-  //CSR_EL_neigh_pop(el,csr);
+  //PB_CSR_neigh_pop(el,csr);
+  CSR_EL_neigh_pop(el,csr);
   printf("Done.\n");
  
  

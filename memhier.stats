@@ -1,0 +1,32 @@
+#
+# L1 stats
+#
+# L1 Data Cache:
+# Load-Hits:                72260   89.78%
+# Load-Misses:               8230   10.22%
+# Load-Accesses:            80490  100.00%
+# 
+# Store-Hits:               29742   92.99%
+# Store-Misses:              2243    7.01%
+# Store-Accesses:           31985  100.00%
+# 
+# Total-Hits:              102002   90.69%
+# Total-Misses:             10473    9.31%
+# Total-Accesses:          112475  100.00%
+
+#
+# L2 stats
+#
+# L2 Data Cache:
+# Load-Hits:                    0     nan%
+# Load-Misses:                  0     nan%
+# Load-Accesses:                0     nan%
+# 
+# Store-Hits:                   0     nan%
+# Store-Misses:                 0     nan%
+# Store-Accesses:               0     nan%
+# 
+# Total-Hits:                   0     nan%
+# Total-Misses:                 0     nan%
+# Total-Accesses:               0     nan%
+
